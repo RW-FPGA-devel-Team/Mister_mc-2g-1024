@@ -198,7 +198,7 @@ pll pll
 
 
 wire        img_readonly;
-wire        ioctl_wait = ~pll_locked;//0; //~ram_ready /*synthesis keep*/;//1'b1;
+wire        ioctl_wait = ~pll_locked;
 wire  [1:0] img_mounted;
 wire [31:0] img_size;
 
@@ -229,12 +229,6 @@ hps_io #(.STRLEN($size(CONF_STR)>>3), .PS2DIV(1923)) hps_io
 	.img_readonly(img_readonly),
 	.img_size(img_size),
 
-//	.ioctl_wr(ioctl_wr),
-//	.ioctl_addr(ioctl_addr),
-//	.ioctl_dout(ioctl_dout),
-//	.ioctl_download(ioctl_download),
-//	.ioctl_index(ioctl_index)
-//  
 	
 	.ps2_kbd_clk_out(PS2_CLK),
 	.ps2_kbd_data_out(PS2_DAT)
@@ -273,9 +267,6 @@ begin
 	g 				<= _g[1:0];
 	b				<= _b[1:0];
 	CE_PIXEL		<= _CE_PIXEL;
-//	SD_CS			<= _SD_CS;
-//	SD_MOSI		<= _SD_MOSI;
-//	SD_SCK		<= _SD_SCK;
 	driveLED 	<= _driveLED;
 end
 
@@ -358,7 +349,7 @@ wire vsdmiso;
 sd_card sd_card
 (
         .*,
-        .clk_spi(clk_sys),  //(clk_100Mhz),//(sd_clk_spi),//OK (clk_100Mhz) con clk_sys = CLK_50M, //(clk_250Mhz),
+        .clk_spi(clk_sys), 
         .sdhc(sdhc),
         .sck(sdclk),
         .ss(sdss | ~vsd_sel),
