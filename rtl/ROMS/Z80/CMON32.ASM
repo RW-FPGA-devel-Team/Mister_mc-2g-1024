@@ -136,7 +136,7 @@ conout1:			; continued from rst 08h
 ;-------------------------------------------------------------
 INITTXT:
 	db CLS,'Press [SPACE] to activate console',CR,LF,0
-SIGNON:	db CR,LF,'Z80 Multicomp multiboot monitor 3.2',CR,LF
+SIGNON:	db CR,LF,'Z80 Multicomp Multiboot Monitor v3.2',CR,LF
 	db 'based on design by G. Searle',CR,LF,LF
 	db '  press ? for help',CR,LF,LF,0
 
@@ -154,9 +154,9 @@ nextBlock:
 	out (ACIA0_C),A		; Initialise ACIA0
 	out (ACIA1_C),A		; Initialise ACIA1
 
-	LD A,B115200		; select baudrate
-	OUT (ACIA0_B),A
-	OUT (ACIA1_B),A	
+;	LD A,B115200		; select baudrate
+;	OUT (ACIA0_B),A
+;	OUT (ACIA1_B),A	
 
 	ld A,ACIA0_C
 	ld (aciaCtl),A
@@ -170,7 +170,14 @@ nextBlock:
 
 	; wait until Space is in one of the buffers to determine the active console
 
+	LD B,B115200		; select baudrate
 waitForSpace:
+	LD A,B
+	inc A
+	and 07h
+	ld B,A
+	OUT (ACIA0_B),A
+	OUT (ACIA1_B),A	
 	ld A,ACIA0_C
 	ld C,A
 	in A,(C)		; Status byte
@@ -287,14 +294,14 @@ charok:	ld (HL),A		; store accepted input
 
 ; erase last entry
 erastr: db 08,' ',08,0		; BS SP BS
-erase:	dec B			; last character entered
-	jr z,escape		; wiping entire string
-	push HL
+erase:	push HL
 	ld HL,erastr		; adjust display
 	call print
 	pop HL
-	ld (HL),0		; erase charcter
+	dec B			; last character entered
+	jr z,escend		; wiping entire string
 	dec HL			; step back in string
+	ld (HL),0		; erase charcter
 	jr cloop 		; go back
 
 
@@ -304,7 +311,7 @@ erase:	dec B			; last character entered
 wipe:	db CR,'aborted                         ',CR,0
 escape:	ld HL,wipe		; clean up entry, start over
 	call print
-	pop HL			; return to main
+escend:	pop HL			; return to main
 	ret ; wipe
 
 
@@ -664,8 +671,8 @@ bctoa2:	add A,B		; Add in the high order nybble
 ;-------------------------------------------------------------
 HLPTXT:	db CR,LF
 	db '  Available Commands:',CR,LF,LF
-	db '  R0                Reset',CR,LF
-	db '  :ccxxxxiinn..     Load Intel-Hex file record',CR,LF
+;	db '  R                 Reset',CR,LF
+	db '  :ccxxxxiibbbbbb   Load Intel-Hex file record',CR,LF
 	db '  Rxxxx             Run from address xxxx',CR,LF
 	db '  Sddd              System boot',CR,LF
 	db '  Iddd              Init: Format directory',CR,LF
@@ -673,7 +680,7 @@ HLPTXT:	db CR,LF
 	db '                    (No address: re-use last loadaddress)',CR,LF
 	db '  Gddd[,xxxx]       GetSys: load system track',CR,LF,LF
 	db '  Dxxxx[,yyyy]      Dump memory from xxxx [,to yyyy]',CR,LF
-	db '  D (no address) shows next block',CR,LF
+	db '  D (no address)    shows next block',CR,LF
 	db '  Cxxxx             Change/show memory at xxxx',CR,LF
 	db '                    CR advances "," quits',CR,LF,LF
 	db '  ddd is a decimal volume number,',CR,LF
