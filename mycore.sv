@@ -153,11 +153,13 @@ assign VIDEO_ARY = 3;
 
 `include "build_id.v"
 localparam CONF_STR = {
-	"MultiComp;;",
+	"mc-2g-1024;;",
+	"S,IMGVHD,Mount virtual SD;",
 	"-;",
 	"T0,Reset;",
+	"R0,Reset and close OSD;",
 	"-;",
-	"V,v1.1.",`BUILD_DATE
+	"V,v1.0.",`BUILD_DATE
 };
 
 
@@ -195,8 +197,15 @@ pll pll
 
 
 
+wire        img_readonly;
+wire        ioctl_wait = ~pll_locked;//0; //~ram_ready /*synthesis keep*/;//1'b1;
+wire  [1:0] img_mounted;
+wire [31:0] img_size;
+
+
 hps_io #(.STRLEN($size(CONF_STR)>>3), .PS2DIV(1923)) hps_io
 (
+   
 	.clk_sys(clk_sys),
 	.HPS_BUS(HPS_BUS),
 
@@ -206,6 +215,27 @@ hps_io #(.STRLEN($size(CONF_STR)>>3), .PS2DIV(1923)) hps_io
 	.status(status),
 	.forced_scandoubler(forced_scandoubler),
 
+	.sd_conf(0),
+  	.sd_lba(sd_lba),
+	.sd_rd(sd_rd),
+	.sd_wr(sd_wr),
+	.sd_ack(sd_ack),
+	.sd_ack_conf(sd_ack_conf),
+	.sd_buff_addr(sd_buff_addr),
+	.sd_buff_dout(sd_buff_dout),
+	.sd_buff_din(sd_buff_din),
+	.sd_buff_wr(sd_buff_wr),
+	.img_mounted(img_mounted),
+	.img_readonly(img_readonly),
+	.img_size(img_size),
+
+//	.ioctl_wr(ioctl_wr),
+//	.ioctl_addr(ioctl_addr),
+//	.ioctl_dout(ioctl_dout),
+//	.ioctl_download(ioctl_download),
+//	.ioctl_index(ioctl_index)
+//  
+	
 	.ps2_kbd_clk_out(PS2_CLK),
 	.ps2_kbd_data_out(PS2_DAT)
 );
@@ -231,9 +261,6 @@ wire [1:0] _r;
 wire [1:0] _g;
 wire [1:0] _b;
 wire [2:0] _CE_PIXEL;
-wire [2:0] _SD_CS;
-wire [2:0] _SD_MOSI;
-wire [2:0] _SD_SCK;
 wire [2:0] _driveLED;
 
 always_comb 
@@ -246,9 +273,9 @@ begin
 	g 				<= _g[1:0];
 	b				<= _b[1:0];
 	CE_PIXEL		<= _CE_PIXEL;
-	SD_CS			<= _SD_CS;
-	SD_MOSI		<= _SD_MOSI;
-	SD_SCK		<= _SD_SCK;
+//	SD_CS			<= _SD_CS;
+//	SD_MOSI		<= _SD_MOSI;
+//	SD_SCK		<= _SD_SCK;
 	driveLED 	<= _driveLED;
 end
 
@@ -285,10 +312,10 @@ Microcomputer Microcomputer
 	.rts1		(UART_RTS),
 	.cts1		(UART_CTS),
 
-	.sdCS(_SD_CS[0]),
-	.sdMOSI(_SD_MOSI[0]),
-	.sdMISO(SD_MISO),
-	.sdSCLK(_SD_SCK[0]),
+	.sdCS(sdss),
+	.sdMOSI(sdmosi),
+	.sdMISO(sdmiso),
+	.sdSCLK(sdclk),
 	.driveLED(_driveLED[0])
 );
 		
@@ -315,5 +342,33 @@ video_cleaner video_cleaner
 	.VGA_DE(VGA_DE)
 );
 
+//////////////////   SD   ///////////////////
+
+wire sdclk;
+wire sdmosi;
+wire sdmiso =vsdmiso ;
+wire sdss;
+
+reg vsd_sel = 0;
+always @(posedge clk_sys) if(img_mounted) vsd_sel <= |img_size;
+
+wire sdhc = 1;
+wire vsdmiso;
+
+sd_card sd_card
+(
+        .*,
+        .clk_spi(clk_sys),  //(clk_100Mhz),//(sd_clk_spi),//OK (clk_100Mhz) con clk_sys = CLK_50M, //(clk_250Mhz),
+        .sdhc(sdhc),
+        .sck(sdclk),
+        .ss(sdss | ~vsd_sel),
+        .mosi(sdmosi),
+        .miso(vsdmiso)
+);
+
+// VHD
+assign SD_CS   = sdss   |  vsd_sel;
+assign SD_SCK  = sdclk  & ~vsd_sel;
+assign SD_MOSI = sdmosi & ~vsd_sel;
 
 endmodule
