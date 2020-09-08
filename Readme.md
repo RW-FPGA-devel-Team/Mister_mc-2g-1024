@@ -51,7 +51,7 @@ disk (as B: or C:) issue the comand "MOUNT DRIVE: nnn" (where nnn is the
 volume number)
 
 ## Useful links
-* [CP/M 3.0 Command reference] (http://www.cpm.z80.de/manuals/cpm3-cmd.pdf)
-* [CP/M 2.2 Operating System Manual] (http://www.cpm.z80.de/manuals/cpm22-m.pdf)
-* [MP/M II User guide] (http://www.cpm.z80.de/manuals/mpm2ug.pdf)
-* [The humongous CP/M Software archives] (http://www.classiccmp.org/cpmarchives/)
+* [CP/M 3.0 Command reference](http://www.cpm.z80.de/manuals/cpm3-cmd.pdf)
+* [CP/M 2.2 Operating System Manual](http://www.cpm.z80.de/manuals/cpm22-m.pdf)
+* [MP/M II User guide](http://www.cpm.z80.de/manuals/mpm2ug.pdf)
+* [The humongous CP/M Software archives](http://www.classiccmp.org/cpmarchives/)
