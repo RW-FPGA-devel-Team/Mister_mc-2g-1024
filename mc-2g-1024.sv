@@ -133,8 +133,8 @@ assign USER_OUT = '1;
 assign {SDRAM_DQ, SDRAM_A, SDRAM_BA, SDRAM_CLK, SDRAM_CKE, SDRAM_DQML, SDRAM_DQMH, SDRAM_nWE, SDRAM_nCAS, SDRAM_nRAS, SDRAM_nCS} = 'Z;
 assign {DDRAM_CLK, DDRAM_BURSTCNT, DDRAM_ADDR, DDRAM_DIN, DDRAM_BE, DDRAM_RD, DDRAM_WE} = '0;  
 
-assign VGA_SL = 0;
-assign VGA_F1 = 0;
+//assign VGA_SL = 0;
+//assign VGA_F1 = 0;
 
 assign AUDIO_S = 0;
 assign AUDIO_L = 0;
@@ -147,8 +147,11 @@ assign LED_USER  = 0;
 assign LED_DISK  = ~driveLED;
 assign LED_POWER = 0;
 
-assign VIDEO_ARX = 4;
-assign VIDEO_ARY = 3;
+
+assign VIDEO_ARX = status[1] ? 8'd16 : 8'd4;
+assign VIDEO_ARY = status[1] ? 8'd9  : 8'd3; 
+
+wire [1:0] scale = status[3:2];
 
 
 `include "build_id.v"
@@ -156,6 +159,7 @@ localparam CONF_STR = {
 	"mc-2g-1024;;",
 	"S,IMGVHD,Mount virtual SD;",
 	"-;",
+	"O1,Aspect ratio,4:3,16:9;",
 	"O56,Screen Color,White,Green,Amber;",
 	"-;",
 	"T0,Reset;",
@@ -325,21 +329,21 @@ logic [23:0] rgb_amber;
 
 // Video colour processing
  always_comb begin
-	  rgb_white = 24'b1111111111111111111101111;
-	  if(colour==2'b00) rgb_white = 24'b000000000000000000000000;
-	  else if(colour==2'b11) rgb_white = 24'b1111111111111111111101111;
+	  rgb_white = 24'hFFFFEF;
+	  if(colour==2'b00) rgb_white = 24'h0;
+	  else if(colour==2'b11) rgb_white = 24'hFFFFEF;
  end
 
  always_comb begin
-	  rgb_green = 24'b0000110011111111000011001;
-	  if(colour==2'b00) rgb_green = 24'b000000000000000000000000;
-	  else if(colour==2'b11) rgb_green = 24'b0000110011111111000011001;;
+	  rgb_green = 24'h00D600;
+	  if(colour==2'b00) rgb_green = 24'h0;
+	  else if(colour==2'b11) rgb_green = 24'h00D600;;
  end
 
  always_comb begin
-	  rgb_amber = 24'b111111110010110000000000;
-	  if(colour==2'b00) rgb_amber = 24'b000000000000000000000000;
-	  else if(colour==2'b11) rgb_amber = 24'b111111110010110000000000;;
+	  rgb_amber = 24'h4ce600;
+	  if(colour==2'b00) rgb_amber = 24'h0;
+	  else if(colour==2'b11) rgb_amber = 24'h4ce600;;
  end
 
  logic [23:0] mono_colour;
@@ -351,26 +355,37 @@ logic [23:0] rgb_amber;
  end
 
 
-video_cleaner video_cleaner
+
+
+assign VGA_SL = scale ? scale - 1'd1 : 2'd0;
+assign VGA_F1 = 0;
+
+video_mixer #(280, 1) mixer
 (
-	.clk_vid(CLK_VIDEO),
-	.ce_pix(CE_PIXEL),
+        .clk_vid(CLK_VIDEO),
 
-	.R(mono_colour[23:16]),
-	.G(mono_colour[15:8]),
-	.B(mono_colour[7:0]),
-	.HSync(hs),
-	.VSync(vs),
-	.HBlank(hblank),
-	.VBlank(vblank),
+        .ce_pix(CE_PIXEL),
 
-	.VGA_R(VGA_R),
-	.VGA_G(VGA_G),
-	.VGA_B(VGA_B),
-	.VGA_VS(VGA_VS),
-	.VGA_HS(VGA_HS),
-	.VGA_DE(VGA_DE)
-);
+        .hq2x(scale == 1),
+        .scanlines(0),
+        .scandoubler(scale || forced_scandoubler),
+		  
+		  .R(mono_colour[23:16]),
+		  .G(mono_colour[15:8]),
+		  .B(mono_colour[7:0]),
+		  .HSync(hs),
+		  .VSync(vs),
+		  .HBlank(hblank),
+		  .VBlank(vblank),
+		
+		  .VGA_R(VGA_R),
+		  .VGA_G(VGA_G),
+		  .VGA_B(VGA_B),
+		  .VGA_VS(VGA_VS),
+		  .VGA_HS(VGA_HS),
+		  .VGA_DE(VGA_DE)
+  );
+
 
 //////////////////   SD   ///////////////////
 
