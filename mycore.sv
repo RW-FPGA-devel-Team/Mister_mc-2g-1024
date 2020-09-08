@@ -156,6 +156,8 @@ localparam CONF_STR = {
 	"mc-2g-1024;;",
 	"S,IMGVHD,Mount virtual SD;",
 	"-;",
+	"O56,Screen Color,White,Green,Amber;",
+	"-;",
 	"T0,Reset;",
 	"R0,Reset and close OSD;",
 	"-;",
@@ -249,8 +251,8 @@ wire hs, vs;
 wire [1:0] r,g,b;
 wire driveLED;
 
-wire [2:0] _hblank, _vblank;
-wire [2:0] _hs, _vs;
+wire _hblank, _vblank;
+wire _hs, _vs;
 wire [1:0] _r;
 wire [1:0] _g;
 wire [1:0] _b;
@@ -289,10 +291,10 @@ Microcomputer Microcomputer
 	.videoG1 (_g[1]),
 	.videoB0 (_b[0]),
 	.videoB1 (_b[1]),
-	.hSync   (_hs[0]),
-	.vSync   (_vs[0]),
-	.hBlank(_hblank[0]),
-	.vBlank(_vblank[0]),
+	.hSync   (_hs),
+	.vSync   (_vs),
+	.hBlank(_hblank),
+	.vBlank(_vblank),
 	.cepix(_CE_PIXEL[0]),
 	//
 	.ps2Clk(PS2_CLK),
@@ -311,15 +313,52 @@ Microcomputer Microcomputer
 );
 		
 
+wire  [1:0]  disp_color= status[6:5];
+wire  [1:0]  colour; 
+
+assign colour=g;  //only one component to test... 
+
+
+logic [23:0] rgb_white;
+logic [23:0] rgb_green;
+logic [23:0] rgb_amber;
+
+// Video colour processing
+ always_comb begin
+	  rgb_white = 24'b1111111111111111111101111;
+	  if(colour==2'b00) rgb_white = 24'b000000000000000000000000;
+	  else if(colour==2'b11) rgb_white = 24'b1111111111111111111101111;
+ end
+
+ always_comb begin
+	  rgb_green = 24'b0000110011111111000011001;
+	  if(colour==2'b00) rgb_green = 24'b000000000000000000000000;
+	  else if(colour==2'b11) rgb_green = 24'b0000110011111111000011001;;
+ end
+
+ always_comb begin
+	  rgb_amber = 24'b111111110010110000000000;
+	  if(colour==2'b00) rgb_amber = 24'b000000000000000000000000;
+	  else if(colour==2'b11) rgb_amber = 24'b111111110010110000000000;;
+ end
+
+ logic [23:0] mono_colour;
+ always_comb begin
+	  if(disp_color==2'b00) mono_colour = rgb_white;
+	  else if(disp_color==2'b01) mono_colour = rgb_green;
+	  else if(disp_color==2'b10) mono_colour= rgb_amber;
+	  else mono_colour = rgb_white;
+ end
+
 
 video_cleaner video_cleaner
 (
 	.clk_vid(CLK_VIDEO),
 	.ce_pix(CE_PIXEL),
 
-	.R({4{r}}),
-	.G({4{g}}),
-	.B({4{b}}),
+	.R(mono_colour[23:16]),
+	.G(mono_colour[15:8]),
+	.B(mono_colour[7:0]),
 	.HSync(hs),
 	.VSync(vs),
 	.HBlank(hblank),
