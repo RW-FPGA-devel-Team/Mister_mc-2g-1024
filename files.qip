@@ -21,4 +21,4 @@ set_global_assignment -name VHDL_FILE rtl/Components/BRG/brg.vhd
 set_global_assignment -name CDF_FILE jtag.cdf
 set_global_assignment -name QIP_FILE sys/sys.qip
 set_global_assignment -name SDC_FILE mycore.sdc
-set_global_assignment -name SYSTEMVERILOG_FILE mycore.sv
+set_global_assignment -name SYSTEMVERILOG_FILE mc-2g-1024.sv
