@@ -329,21 +329,21 @@ logic [23:0] rgb_amber;
 
 // Video colour processing
  always_comb begin
-	  rgb_white = 24'hFFFFEF;
+	  rgb_white = 24'hEFEFFEF;
 	  if(colour==2'b00) rgb_white = 24'h0;
-	  else if(colour==2'b11) rgb_white = 24'hFFFFEF;
+	  else if(colour==2'b11) rgb_white = 24'hFFFFFF;
  end
 
  always_comb begin
-	  rgb_green = 24'h00D600;
+	  rgb_green = 24'h00E600;
 	  if(colour==2'b00) rgb_green = 24'h0;
-	  else if(colour==2'b11) rgb_green = 24'h00D600;;
+	  else if(colour==2'b11) rgb_green = 24'h00F600;;
  end
 
  always_comb begin
-	  rgb_amber = 24'h4ce600;
+	  rgb_amber = 24'h4DE600;
 	  if(colour==2'b00) rgb_amber = 24'h0;
-	  else if(colour==2'b11) rgb_amber = 24'h4ce600;;
+	  else if(colour==2'b11) rgb_amber = 24'h5CF600;;
  end
 
  logic [23:0] mono_colour;
