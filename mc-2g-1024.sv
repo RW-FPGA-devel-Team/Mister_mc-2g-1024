@@ -98,19 +98,8 @@ module emu
 	output  [7:0] DDRAM_BE,
 	output        DDRAM_WE,
 
-	//SDRAM interface with lower latency
-	output        SDRAM_CLK,
-	output        SDRAM_CKE,
-	output [12:0] SDRAM_A,
-	output  [1:0] SDRAM_BA,
-	inout  [15:0] SDRAM_DQ,
-	output        SDRAM_DQML,
-	output        SDRAM_DQMH,
+	
 	output        SDRAM_nCS,
-	output        SDRAM_nCAS,
-	output        SDRAM_nRAS,
-	output        SDRAM_nWE,
-
 	
 //SDRAM interface with lower latency
 	output [20:0] SRAM_A,
@@ -340,7 +329,7 @@ logic [23:0] rgb_amber;
 
 // Video colour processing
  always_comb begin
-	  rgb_white = 24'hEFEFFEF;
+	  rgb_white = 24'hEFEFEF;
 	  if(colour==2'b00) rgb_white = 24'h0;
 	  else if(colour==2'b11) rgb_white = 24'hFFFFFF;
  end
