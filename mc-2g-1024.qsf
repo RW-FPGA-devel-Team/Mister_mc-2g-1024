@@ -57,7 +57,8 @@ set_global_assignment -name SEED 1
 #do not enable DEBUG_NOHDMI in release!
 #set_global_assignment -name VERILOG_MACRO "DEBUG_NOHDMI=1"
 
-source sys/sys.tcl
+source sys/sys_sram.tcl
+
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEBA6U23I7
 set_global_assignment -name DEVICE_FILTER_PACKAGE UFBGA

@@ -101,8 +101,8 @@ architecture struct of Microcomputer is
 	signal n_RomActive 			: std_logic := '0';
 
 	signal physicaladdr			: std_logic_vector(19 downto 0);
-	signal n_internalRam1CS			: std_logic :='1';
-	signal n_internalRam2CS			: std_logic :='1';
+	signal n_externalRam1CS			: std_logic :='1';
+	signal n_externalRam2CS			: std_logic :='1';
 	signal n_mmuCS					: std_logic :='1';
 
 	signal intClkCount			: std_logic_vector(19 downto 0);
@@ -201,17 +201,15 @@ begin
 	);
 
 	
-	ram1  : entity work.ram256K
-	port map
-	(
-		address => physicaladdr(17 downto 0),
-		clock => clk,
-		data => cpuDataOut,
-		wren => not(n_memWR or n_internalRam1CS),
-	   q => internalRam1DataOut
-		);
 	
-	
+	 sramData <= cpuDataOut when n_memWR='0' else (others => 'Z');
+    sramAddress <= physicaladdr(18 downto 0);
+	  
+	  n_sRamWE <= n_memWR;
+	  n_sRamOE <= n_memRD;
+	  n_sRam1CS <= n_externalRam1CS;
+	  n_sRam2CS <= n_externalRam2CS;
+
 	
 -- ____________________________________________________________________________________
 -- INPUT/OUTPUT DEVICES GO HERE	
@@ -417,7 +415,8 @@ port map (
 	n_interface4CS <= '0' when cpuAddress(7 downto 1) = "1000011" and (n_ioWR='0' or n_ioRD = '0') else '1'; 	-- 2 Bytes 	$86-$87
 	n_sdCardCS 		<= '0' when cpuAddress(7 downto 3) = "10001" and (n_ioWR='0' or n_ioRD = '0') else '1'; 		-- 8 Bytes 	$88-$8F
 	n_mmuCS 			<= '0' when cpuAddress(7 downto 3) = "11111" and (n_ioWR='0' or n_ioRD = '0') else '1'; 		-- 8 bytes 	$F8-$FF
-	n_internalRam1CS <= not n_monRomCS; -- Full Internal RAM - 64 K
+	n_externalRam1CS<= not(n_monRomCS and not physicaladdr(19));
+   n_externalRam2CS<= not(n_monRomCS and physicaladdr(19));
 -- ____________________________________________________________________________________
 -- BUS ISOLATION GOES HERE
 	cpuDataIn <=
@@ -427,7 +426,9 @@ port map (
 		interface4DataOut when n_interface4CS = '0' else
 		sdCardDataOut when n_sdCardCS = '0' else
 		monRomData when n_monRomCS = '0' else
-		internalRam1DataOut when n_internalRam1CS= '0' else
+		sramData when n_externalRam1CS= '0' else
+      sramData when n_externalRam2CS= '0' else
+
 		x"FF";
 -- ____________________________________________________________________________________
 -- SYSTEM CLOCKS GO HERE

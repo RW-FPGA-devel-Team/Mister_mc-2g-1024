@@ -111,14 +111,21 @@ module emu
 	output        SDRAM_nRAS,
 	output        SDRAM_nWE,
 
+	
+//SDRAM interface with lower latency
+	output [20:0] SRAM_A,
+	inout  [7:0]  SRAM_DQ,
+	output        SRAM_nCE,
+	output        SRAM_nOE,
+	output        SRAM_nWE,
+
 	input         UART_CTS,
 	output        UART_RTS,
 	input         UART_RXD,
 	output        UART_TXD,
 	output        UART_DTR,
 	input         UART_DSR,
-
-
+	
 	input   [6:0] USER_IN,
 	output  [6:0] USER_OUT,
 
@@ -130,7 +137,7 @@ assign ADC_BUS  = 'Z;
 assign USER_OUT = '1;
 //assign {UART_RTS, UART_TXD, UART_DTR} = 0;
 //assign {SD_SCK, SD_MOSI, SD_CS} = 'Z;
-assign {SDRAM_DQ, SDRAM_A, SDRAM_BA, SDRAM_CLK, SDRAM_CKE, SDRAM_DQML, SDRAM_DQMH, SDRAM_nWE, SDRAM_nCAS, SDRAM_nRAS, SDRAM_nCS} = 'Z;
+//assign {SDRAM_DQ, SDRAM_A, SDRAM_BA, SDRAM_CLK, SDRAM_CKE, SDRAM_DQML, SDRAM_DQMH, SDRAM_nWE, SDRAM_nCAS, SDRAM_nRAS, SDRAM_nCS} = 'Z;
 assign {DDRAM_CLK, DDRAM_BURSTCNT, DDRAM_ADDR, DDRAM_DIN, DDRAM_BE, DDRAM_RD, DDRAM_WE} = '0;  
 
 //assign VGA_SL = 0;
@@ -276,16 +283,20 @@ begin
 	driveLED 	<= _driveLED;
 end
 
+
+//assign SDRAM_CKE=0;
+assign SDRAM_nCS=1;
+
 Microcomputer Microcomputer
 (
 	.n_reset(~reset),
 	.clk(clk_sys),
 	//
-  	.sramData		(),
-	.sramAddress	(),
-	.n_sRamWE		(),
-	.n_sRamOE		(),
-	.n_sRam1CS		(),
+  	.sramData		(SRAM_DQ),
+	.sramAddress	(SRAM_A),
+	.n_sRamWE		(SRAM_nWE),
+	.n_sRamOE		(SRAM_nOE),
+	.n_sRam1CS		(SRAM_nCE),
 	.n_sRam2CS		(),
 
 	//
