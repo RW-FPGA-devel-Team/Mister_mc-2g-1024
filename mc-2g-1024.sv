@@ -99,14 +99,26 @@ module emu
 	output        DDRAM_WE,
 
 	
+
+	//SDRAM interface with lower latency
+	output        SDRAM_CLK,
+	output        SDRAM_CKE,
+	output [12:0] SDRAM_A,
+	output  [1:0] SDRAM_BA,
+	inout  [15:0] SDRAM_DQ,
+	output        SDRAM_DQML,
+	output        SDRAM_DQMH,
 	output        SDRAM_nCS,
+	output        SDRAM_nCAS,
+	output        SDRAM_nRAS,
+	output        SDRAM_nWE,
 	
 //SDRAM interface with lower latency
-	output [20:0] SRAM_A,
-	inout  [7:0]  SRAM_DQ,
-	output        SRAM_nCE,
-	output        SRAM_nOE,
-	output        SRAM_nWE,
+//	output [20:0] SRAM_A,
+//	inout  [7:0]  SRAM_DQ,
+//	output        SRAM_nCE,
+//	output        SRAM_nOE,
+//	output        SRAM_nWE,
 
 	input         UART_CTS,
 	output        UART_RTS,
@@ -274,7 +286,23 @@ end
 
 
 //assign SDRAM_CKE=0;
-assign SDRAM_nCS=1;
+//assign SDRAM_nCS=1;
+
+
+wire [20:0] SRAM_A;
+wire  [7:0] SRAM_DQ;
+wire  SRAM_nCE, SRAM_nOE, SRAM_nWE;
+
+Mister_sRam sRam
+( .*,
+  //.SDRAM_nCS   (1),
+  .SRAM_A		(SRAM_A),
+  .SRAM_DQ		(SRAM_DQ),
+  .SRAM_nCE    (SRAM_nCE),
+  .SRAM_nOE    (SRAM_nOE),
+  .SRAM_nWE    (SRAM_nWE)
+  
+);
 
 Microcomputer Microcomputer
 (

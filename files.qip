@@ -1,5 +1,4 @@
-set_global_assignment -name QIP_FILE rtl/RAM/ram256K.qip
-set_global_assignment -name VHDL_FILE rtl/sdram/ssdram.vhd
+set_global_assignment -name VERILOG_FILE rtl/RAM/sram.v
 set_global_assignment -name VHDL_FILE rtl/Microcomputer.vhd
 set_global_assignment -name QIP_FILE rtl/ROMS/Z80/Z80_CMON_ROM.qip
 set_global_assignment -name QIP_FILE rtl/Components/TERMINAL/DisplayRam1K.qip
@@ -20,5 +19,4 @@ set_global_assignment -name VHDL_FILE rtl/Components/MMU/MMU4.vhd
 set_global_assignment -name VHDL_FILE rtl/Components/BRG/brg.vhd
 set_global_assignment -name CDF_FILE jtag.cdf
 set_global_assignment -name QIP_FILE sys/sys.qip
-set_global_assignment -name SDC_FILE mycore.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE mc-2g-1024.sv

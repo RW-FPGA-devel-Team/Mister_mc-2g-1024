@@ -56,26 +56,17 @@ module sys_top
 	input         HDMI_TX_INT,
 
 	//////////// SDR ///////////
-//	output [12:0] SDRAM_A,
-//	inout  [15:0] SDRAM_DQ,
-//	output        SDRAM_DQML,
-//	output        SDRAM_DQMH,
-//	output        SDRAM_nWE,
-//	output        SDRAM_nCAS,
-//	output        SDRAM_nRAS,
-	output        SDRAM_nCS = 1,
-//	output  [1:0] SDRAM_BA,
-//	output        SDRAM_CLK,
-//	output        SDRAM_CKE,
-
-	// SRAM 2 MB
-	output [20:0] SRAM_A,
-   inout  [7:0]  SRAM_DQ,
-   output        SRAM_nWE,
-   output        SRAM_nOE,
-   output        SRAM_nCE,
-
-
+	output [12:0] SDRAM_A,
+	inout  [15:0] SDRAM_DQ,
+	output        SDRAM_DQML,
+	output        SDRAM_DQMH,
+	output        SDRAM_nWE,
+	output        SDRAM_nCAS,
+	output        SDRAM_nRAS,
+	output        SDRAM_nCS,
+	output  [1:0] SDRAM_BA,
+	output        SDRAM_CLK,
+	output        SDRAM_CKE,
 
 `ifdef DUAL_SDRAM
 	////////// SDR #2 //////////
@@ -1480,25 +1471,18 @@ emu emu
 	.DDRAM_WE(ram_write),
 `endif
 
-  // SDRAM 2 MB
-   .SRAM_A   (SRAM_A),
-	.SRAM_DQ  (SRAM_DQ),
-	.SRAM_nWE (SRAM_nWE),
-	.SRAM_nOE (SRAM_nOE),
-   .SRAM_nCE (SRAM_nCE),
-
 `ifdef USE_SDRAM
-//	.SDRAM_DQ(SDRAM_DQ),
-//	.SDRAM_A(SDRAM_A),
-//	.SDRAM_DQML(SDRAM_DQML),
-//	.SDRAM_DQMH(SDRAM_DQMH),
-//	.SDRAM_BA(SDRAM_BA),
+	.SDRAM_DQ(SDRAM_DQ),
+	.SDRAM_A(SDRAM_A),
+	.SDRAM_DQML(SDRAM_DQML),
+	.SDRAM_DQMH(SDRAM_DQMH),
+	.SDRAM_BA(SDRAM_BA),
 	.SDRAM_nCS(SDRAM_nCS),
-//	.SDRAM_nWE(SDRAM_nWE),
-//	.SDRAM_nRAS(SDRAM_nRAS),
-//	.SDRAM_nCAS(SDRAM_nCAS),
-//	.SDRAM_CLK(SDRAM_CLK),
-//	.SDRAM_CKE(SDRAM_CKE),
+	.SDRAM_nWE(SDRAM_nWE),
+	.SDRAM_nRAS(SDRAM_nRAS),
+	.SDRAM_nCAS(SDRAM_nCAS),
+	.SDRAM_CLK(SDRAM_CLK),
+	.SDRAM_CKE(SDRAM_CKE),
 `endif
 
 `ifdef DUAL_SDRAM
