@@ -28,19 +28,32 @@ assign SDRAM_nCAS = SRAM_nOE;
 assign SDRAM_nWE = SRAM_nWE;
 assign SDRAM_nCS = ~SRAM_nCE;
 
-assign SDRAM_DQ[11] = SRAM_DQ[0];
-assign SDRAM_DQ[10] = SRAM_DQ[1];
-assign SDRAM_DQ[ 8] = SRAM_DQ[2];
-assign SDRAM_DQ[ 9] = SRAM_DQ[3];
-assign SDRAM_DQ[ 7] = SRAM_DQ[4];
-assign SDRAM_DQ[ 6] = SRAM_DQ[5];
-assign SDRAM_DQ[ 5] = SRAM_DQ[6];
-assign SDRAM_DQ[ 4] = SRAM_DQ[7];
+
+assign SDRAM_DQ[11] = SRAM_nWE ? 1'bZ : SRAM_DQ[0];
+assign SDRAM_DQ[10] = SRAM_nWE ? 1'bZ : SRAM_DQ[1];
+assign SDRAM_DQ[ 8] = SRAM_nWE ? 1'bZ : SRAM_DQ[2];
+assign SDRAM_DQ[ 9] = SRAM_nWE ? 1'bZ : SRAM_DQ[3];
+assign SDRAM_DQ[ 7] = SRAM_nWE ? 1'bZ : SRAM_DQ[4];
+assign SDRAM_DQ[ 6] = SRAM_nWE ? 1'bZ : SRAM_DQ[5];
+assign SDRAM_DQ[ 5] = SRAM_nWE ? 1'bZ : SRAM_DQ[6];
+assign SDRAM_DQ[ 4] = SRAM_nWE ? 1'bZ : SRAM_DQ[7];
+
+
+assign SRAM_DQ[ 0] = SRAM_nWE ? SDRAM_DQ[11] : 1'bZ;
+assign SRAM_DQ[ 1] = SRAM_nWE ? SDRAM_DQ[10] : 1'bZ;
+assign SRAM_DQ[ 2] = SRAM_nWE ? SDRAM_DQ[ 8] : 1'bZ;
+assign SRAM_DQ[ 3] = SRAM_nWE ? SDRAM_DQ[ 9] : 1'bZ;
+assign SRAM_DQ[ 4] = SRAM_nWE ? SDRAM_DQ[ 7] : 1'bZ;
+assign SRAM_DQ[ 5] = SRAM_nWE ? SDRAM_DQ[ 6] : 1'bZ;
+assign SRAM_DQ[ 6] = SRAM_nWE ? SDRAM_DQ[ 5] : 1'bZ;
+assign SRAM_DQ[ 7] = SRAM_nWE ? SDRAM_DQ[ 4] : 1'bZ;
+
 
 assign SDRAM_DQ[15] = SRAM_A[ 0];
 assign SDRAM_DQ[14] = SRAM_A[ 1];
 assign SDRAM_DQ[13] = SRAM_A[ 2];
 assign SDRAM_DQ[12] = SRAM_A[ 3];
+
 assign SDRAM_A [ 4] = SRAM_A[ 4];
 assign SDRAM_A [ 7] = SRAM_A[ 5];
 assign SDRAM_A [12] = SRAM_A[ 6];
