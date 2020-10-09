@@ -23,10 +23,10 @@ module Mister_sRam
 
 );
 
-assign SDRAM_CKE = SRAM_nCE;
+assign SDRAM_CKE  = SRAM_nCE;
 assign SDRAM_nCAS = SRAM_nOE;
-assign SDRAM_nWE = SRAM_nWE;
-assign SDRAM_nCS = ~SRAM_nCE;
+assign SDRAM_nWE  = SRAM_nWE;
+assign SDRAM_nCS  = ~SRAM_nCE;
 
 
 assign SDRAM_DQ[11] = SRAM_nWE ? 1'bZ : SRAM_DQ[0];

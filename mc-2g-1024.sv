@@ -168,7 +168,7 @@ localparam CONF_STR = {
 	"S,IMGVHD,Mount virtual SD;",
 	"-;",
 	"O1,Aspect ratio,4:3,16:9;",
-	"O56,Screen Color,White,Green,Amber;",
+	"O56,Screen Color,White,Green,Amber,Colour;",
 	"-;",
 	"T0,Reset;",
 	"R0,Reset and close OSD;",
@@ -379,6 +379,7 @@ logic [23:0] rgb_amber;
 	  if(disp_color==2'b00) mono_colour = rgb_white;
 	  else if(disp_color==2'b01) mono_colour = rgb_green;
 	  else if(disp_color==2'b10) mono_colour= rgb_amber;
+	  else if(disp_color==2'b11) mono_colour= {{r},{r},{r},{r},{g},{g},{g},{g},{b},{b},{b},{b}};
 	  else mono_colour = rgb_white;
  end
 

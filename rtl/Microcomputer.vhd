@@ -244,7 +244,7 @@ begin
 io2 : entity work.SBCTextDisplayRGB
 
 generic map(
-	EXTENDED_CHARSET => 1
+	EXTENDED_CHARSET => 0
 
 --	VGA 680x400 Values
 --	DISPLAY_TOP_SCANLINE => 35,
