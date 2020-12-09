@@ -245,7 +245,7 @@ io2 : entity work.SBCTextDisplayRGB
 
 generic map(
 	EXTENDED_CHARSET => 0
-
+ 
 --	VGA 680x400 Values
 --	DISPLAY_TOP_SCANLINE => 35,
 --	VERT_SCANLINES => 448,
@@ -260,6 +260,7 @@ generic map(
 --	VSYNC_SCANLINES => 4,
 --	HSYNC_CLOCKS => 235,
 --	DISPLAY_LEFT_CLOCK => 850
+
 )
 
 port map (
